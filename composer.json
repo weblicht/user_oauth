@@ -1,0 +1,13 @@
+{
+    "autoload": {
+        "classmap": [
+            "src/"
+        ]
+    },
+    "config": {
+        "vendor-dir": "3rdparty"
+    },
+    "require": {
+        "fkooman/oauth-rs": "0.7.*"
+    }
+}
