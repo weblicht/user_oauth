@@ -63,4 +63,4 @@ far we were unable to make it work. We tested version 1.4.1 of the Android app
 from the F-Droid repository.
 
 # Compatibilty
-The app was tested with version 5 of ownCloud.
+The app was tested with version 8 of ownCloud, but it should work with version 7 as well.
