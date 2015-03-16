@@ -6,7 +6,7 @@
 	<version>1.0</version>
 	<licence>AGPL</licence>
 	<author>Frank Karlitschek</author>
-	<requiremin>4.93</requiremin>
+	<requiremin>5.00</requiremin>
 	<shipped>true</shipped>
 	<remote>
 		<odav>remote.php</odav>

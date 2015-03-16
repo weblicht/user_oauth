@@ -27,7 +27,7 @@
 require_once '3rdparty/autoload.php';
 require_once 'src/OC_Connector_Sabre_OAuth.php';
 
-$introspectionEndpoint = \OCP\Config::getSystemValue( "introspectionEndpoint", "https://frko.surfnetlabs.nl/workshop/php-oauth/introspect.php" );
+$introspectionEndpoint = \OCP\Config::getAppValue("user_oauth", "introspectionEndpoint", "https://frko.surfnetlabs.nl/workshop/php-oauth/introspect.php" );
 
 $authBackend = new OC_Connector_Sabre_OAuth();
 $lockBackend = new OC_Connector_Sabre_Locks();
