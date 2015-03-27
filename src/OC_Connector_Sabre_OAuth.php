@@ -1,7 +1,7 @@
 <?php
 
 require __dir__ . '/../3rdparty/autoload.php';
-use fkooman\OAuth\ResourceServer\ResourceServer;
+use fkooman\OAuth\ResourceServer\ApisResourceServer;
 use fkooman\OAuth\ResourceServer\ResourceServerException;
 use Sabre\DAV\Auth\Backend\BackendInterface;
 
@@ -20,6 +20,7 @@ class OC_Connector_Sabre_OAuth implements BackendInterface
 
     public function getCurrentUser()
     {
+        kill("getCurrentUser called");
         return $this->currentUser;
     }
 
@@ -31,18 +32,24 @@ class OC_Connector_Sabre_OAuth implements BackendInterface
         );
 
         try {
-            $resourceServer = new ResourceServer(
+            $resourceServer = new ApisResourceServer(
                 new Client($this->introspectionEndpoint));
             $requestHeaders = apache_request_headers();
-            $authorizationHeader = isset($requestHeaders['Authorization']) ? $requestHeaders['Authorization'] : null;
-            $resourceServer->setAuthorizationHeader($authorizationHeader);
+            $authenticationHeader = isset($requestHeaders['Authorization']) ? $requestHeaders['Authorization'] : null;
+            $username = OCP\Config::getAppValue('user_oauth', 'username', '');
+            $password = OCP\Config::getAppValue('user_oauth', 'password', '');
+            $credentials = base64_encode($username . ':' . $password);
+
+            $resourceServer->setAuthenticationHeader('Basic: ' . $credentials);
 
             //get the query parameter
             $acessTokenQueryParameter = isset($_GET['access_token']) ? $_GET['access_token'] : null;
             $resourceServer->setAccessTokenQueryParameter($acessTokenQueryParameter);
             $tokenIntrospection = $resourceServer->verifyToken();
-            $this->currentUser = $tokenIntrospection->getSub();
-
+            $this->currentUser = persistentId2LoginName($tokenIntrospection->getSub());
+            if(!OC_User::userExists($this->currentUser)) {
+                throw new ResourceServerException("User_doesnt_exist", "User doesn't exist, please log in through shibboleth first");
+            }
             OC_User::setUserid($this->currentUser);
             OC_Util::setupFS($this->currentUser);
 
@@ -65,5 +72,9 @@ class OC_Connector_Sabre_OAuth implements BackendInterface
             header("Content-Type: application/json");
             echo json_encode($e->getMessage());
         }
+    }
+
+    private persistentId2LoginName($persistentId) {
+        return hash('sha256', $persistentId);
     }
 }

@@ -26,12 +26,16 @@
 // Backends
 require_once '3rdparty/autoload.php';
 require_once 'src/OC_Connector_Sabre_OAuth.php';
+require_once 'src/OC_Connector_Sabre_QueryRequest.php';
 
 $introspectionEndpoint = \OCP\Config::getAppValue("user_oauth", "introspectionEndpoint", "https://frko.surfnetlabs.nl/workshop/php-oauth/introspect.php" );
+$credentials = \OCP\Config::getAppValue("user_oauth", "credentials");
 
-$authBackend = new OC_Connector_Sabre_OAuth();
+$authBackend = new OC_Connector_Sabre_OAuth($introspectionEndpoint);
+//$authBackend = new OC_Connector_Sabre_Auth();
 $lockBackend = new OC_Connector_Sabre_Locks();
-$requestBackend = new OC_Connector_Sabre_Request();
+$requestBackend = new OC_Connector_Sabre_QueryRequest();
+
 
 // Fire up server
 $objectTree = new \OC\Connector\Sabre\ObjectTree();
