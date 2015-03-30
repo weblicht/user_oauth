@@ -46,7 +46,7 @@ class OC_Connector_Sabre_OAuth implements BackendInterface
             $acessTokenQueryParameter = isset($_GET['access_token']) ? $_GET['access_token'] : null;
             $resourceServer->setAccessTokenQueryParameter($acessTokenQueryParameter);
             $tokenIntrospection = $resourceServer->verifyToken();
-            $this->currentUser = persistentId2LoginName($tokenIntrospection->getSub());
+            $this->currentUser = $this->persistentId2LoginName($tokenIntrospection->getSub());
             if(!OC_User::userExists($this->currentUser)) {
                 throw new ResourceServerException("User_doesnt_exist", "User doesn't exist, please log in through shibboleth first");
             }
@@ -74,7 +74,7 @@ class OC_Connector_Sabre_OAuth implements BackendInterface
         }
     }
 
-    private persistentId2LoginName($persistentId) {
+    private function persistentId2LoginName($persistentId) {
         return hash('sha256', $persistentId);
     }
 }
