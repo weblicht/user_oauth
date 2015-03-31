@@ -35,13 +35,14 @@ class OC_Connector_Sabre_OAuth implements BackendInterface
             $resourceServer = new ApisResourceServer(
                 new Client($this->introspectionEndpoint));
             $requestHeaders = apache_request_headers();
-            $authenticationHeader = isset($requestHeaders['Authorization']) ? $requestHeaders['Authorization'] : null;
             $username = OCP\Config::getAppValue('user_oauth', 'username', '');
             $password = OCP\Config::getAppValue('user_oauth', 'password', '');
             $credentials = base64_encode($username . ':' . $password);
 
             $resourceServer->setAuthenticationHeader('Basic: ' . $credentials);
 
+            $authorizationHeader = isset($requestHeaders['Authorization']) ? $requestHeaders['Authorization'] : null;
+            $resourceServer->setAuthorizationHeader($authorizationHeader);
             //get the query parameter
             $acessTokenQueryParameter = isset($_GET['access_token']) ? $_GET['access_token'] : null;
             $resourceServer->setAccessTokenQueryParameter($acessTokenQueryParameter);
